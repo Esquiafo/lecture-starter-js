@@ -12,10 +12,9 @@ class FighterService {
         }
     }
 
-    async getFighterInfo(id) {
+    static async getFighterInfo(id) {
         try {
-            this.endpoint = `details/fighter/${id}.json`;
-            const apiResult = await callApi(this.endpoint);
+            const apiResult = await callApi(`details/fighter/${id}.json`);
             return apiResult;
         } catch (error) {
             throw error;
