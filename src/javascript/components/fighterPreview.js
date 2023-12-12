@@ -6,7 +6,9 @@ export function createFighterPreview(fighter, position) {
         tagName: 'div',
         className: `fighter-preview___root ${positionClassName}`
     });
-    fighterElement.appendChild(document.createElement('img')).src = fighter.source;
+    if (fighter) {
+        fighterElement.appendChild(document.createElement('img')).src = fighter.source;
+    }
     return fighterElement;
 }
 
