@@ -3,6 +3,11 @@ import callApi from '../helpers/apiHelper';
 class FighterService {
     #endpoint = 'fighters.json';
 
+    #getId(id) {
+        const idEndpoint = `details/fighter/${id}.json`;
+        return `${this.#endpoint}/${idEndpoint}`;
+    }
+
     async getFighters() {
         try {
             const apiResult = await callApi(this.#endpoint);
@@ -12,9 +17,13 @@ class FighterService {
         }
     }
 
-    async getFighterDetails(id) {
-        // todo: implement this method
-        // endpoint - `details/fighter/${id}.json`;
+    async getFighterInfo(id) {
+        try {
+            const apiResult = await callApi(this.#getId(id));
+            return apiResult;
+        } catch (error) {
+            throw error;
+        }
     }
 }
 
