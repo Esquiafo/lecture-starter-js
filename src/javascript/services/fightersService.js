@@ -12,10 +12,19 @@ class FighterService {
         }
     }
 
-    async getFighterDetails(id) {
-        // todo: implement this method
-        // endpoint - `details/fighter/${id}.json`;
+    static async getFighterInfo(id) {
+        try {
+            const endpoint = `details/fighter/${id}.json`;
+            const apiResult = await callApi(endpoint);
+            return apiResult;
+        } catch (error) {
+            throw error;
+        }
     }
+    // async getFighterDetails(id) {
+    //     // todo: implement this method
+    //     // endpoint - `details/fighter/${id}.json`;
+    // }
 }
 
 const fighterService = new FighterService();
