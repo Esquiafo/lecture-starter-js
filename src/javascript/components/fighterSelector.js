@@ -3,6 +3,7 @@ import renderArena from './arena';
 import versusImg from '../../../resources/versus.png';
 import { createFighterPreview } from './fighterPreview';
 import fighterService from '../services/fightersService';
+import { fight } from './fight';
 
 // const fighterDetailsMap = new Map();
 
@@ -14,6 +15,7 @@ export async function getFighterInfo(fighterId) {
 
 function startFight(selectedFighters) {
     renderArena(selectedFighters);
+    fight(selectedFighters[0], selectedFighters[1]);
 }
 
 function createVersusBlock(selectedFighters) {

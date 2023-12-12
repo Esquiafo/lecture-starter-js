@@ -1,5 +1,5 @@
 import showModal from './modal';
 
 export default function showWinnerModal(fighter) {
-    // call showModal function
+    return showModal({ title: `${fighter.name} wins!`, bodyElement: `${fighter.player} has won` });
 }

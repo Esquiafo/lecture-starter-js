@@ -9,6 +9,9 @@ export function createFighterPreview(fighter, position) {
     if (fighter) {
         fighterElement.appendChild(document.createElement('img')).src = fighter.source;
     }
+    if (position === 'right') {
+        fighterElement.style.transform = 'scale(-1, 1)';
+    }
     return fighterElement;
 }
 
