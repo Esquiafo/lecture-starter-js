@@ -86,3 +86,4 @@ export async function fight(firstFighter, secondFighter) {
         });
     });
 }
+
