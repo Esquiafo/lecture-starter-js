@@ -110,3 +110,4 @@ export async function fight(firstFighter, secondFighter) {
         return showWinnerModal(winner);
     });
 }
+
