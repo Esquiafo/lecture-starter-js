@@ -13,6 +13,7 @@ class FighterService {
             const apiResult = await callApi(this.#endpoint);
             return apiResult;
         } catch (error) {
+            console.error(`Error in getFighters: ${error.message}`);
             throw error;
         }
     }
@@ -22,6 +23,17 @@ class FighterService {
             const apiResult = await callApi(this.#getId(id));
             return apiResult;
         } catch (error) {
+            console.error(`Error in getFighterInfo: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async getFighterDetails(id) {
+        try {
+            const apiResult = await callApi(this.#getId(id));
+            return apiResult;
+        } catch (error) {
+            console.error(`Error in getFighterDetails: ${error.message}`);
             throw error;
         }
     }
