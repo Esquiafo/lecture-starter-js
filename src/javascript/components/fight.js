@@ -3,26 +3,31 @@ import showWinnerModal from './modal/winner';
 
 export function getHitPower(fighter) {
     const randomNumber = Math.floor(Math.random() * 2) + 1;
-    const power = randomNumber * fighter.attack;
+    const power = parseInt(randomNumber * fighter.attack, 10);
     return power;
 }
 
 export function getBlockPower(fighter) {
     const randomNumber = Math.floor(Math.random() * 2) + 1;
-    const power = randomNumber * fighter.defense;
+    const power = parseInt(randomNumber * fighter.defense, 10);
     return power;
 }
 
 export function getDamage(attacker, defender) {
-    const defenderCopy = { ...defender };
-    const damage = Math.max(1, parseInt(getHitPower(attacker), 10) - parseInt(getBlockPower(defenderCopy), 10));
-    defenderCopy.health = Math.max(0, defenderCopy.health - damage);
-    Object.assign(defender, { health: defenderCopy.health });
-    return damage;
+    const setDefense = defender.defensivePosition
+        ? parseInt(getBlockPower(defender), 10)
+        : parseInt(defender.defense, 10);
+    const setDamage = getHitPower(attacker);
+    const calculateDefense = setDefense;
+    const calculateAttack = setDamage;
+    const power = calculateDefense >= calculateAttack ? 1 : parseInt(calculateAttack - calculateDefense, 10);
+    defender.health -= power;
+    return power;
 }
 
-export function specialAttack(fighter) {
-    const power = fighter.attack * 2;
+export function getSpecialAttack(attacker, defender) {
+    const power = attacker.attack * 2;
+    defender.health -= power;
     return power;
 }
 
@@ -31,41 +36,78 @@ export async function fight(firstFighter, secondFighter) {
     const playerTwo = { ...secondFighter };
     playerOne.player = 'Player 1';
     playerTwo.player = 'Player 2';
+    playerOne.specialMove = true;
+    playerTwo.specialMove = true;
+    playerOne.defensivePosition = false;
+    playerTwo.defensivePosition = false;
     const maxHealthplayerOne = firstFighter.health;
     const maxHealthplayerTwo = secondFighter.health;
-
+    const updateHealthBar = () => {
+        const playerOnePercantajeHealth = (playerOne.health * 100) / maxHealthplayerOne;
+        const playerTwoPercantajeHealth = (playerTwo.health * 100) / maxHealthplayerTwo;
+        document.getElementById('left-fighter-indicator').style.width = `${
+            playerOnePercantajeHealth <= 0 ? 0 : playerOnePercantajeHealth
+        }%`;
+        document.getElementById('right-fighter-indicator').style.width = `${
+            playerTwoPercantajeHealth <= 0 ? 0 : playerTwoPercantajeHealth
+        }%`;
+    };
     return new Promise(resolve => {
         const pressedKeys = {};
-
+        function getSpecialMoves(attacker, defender, specialCombination) {
+            if (attacker.specialMove && specialCombination.every(key => pressedKeys[key])) {
+                getSpecialAttack(attacker, defender);
+                attacker.specialMove = false;
+                setTimeout(() => {
+                    attacker.specialMove = true;
+                }, 10000);
+            }
+        }
         document.addEventListener('keypress', event => {
+            pressedKeys[event.code] = true;
             if (playerOne.health <= 0 || playerTwo.health <= 0) {
-                playerOne.health <= 0 ? showWinnerModal(playerTwo) : showWinnerModal(playerOne);
-                resolve(null);
+                updateHealthBar();
+                playerOne.health <= 0 ? resolve(playerTwo) : resolve(playerOne);
             } else {
-                document.getElementById('left-fighter-indicator').style.width = `${
-                    (playerOne.health * 100) / maxHealthplayerOne
-                }%`;
-                document.getElementById('right-fighter-indicator').style.width = `${
-                    (playerTwo.health * 100) / maxHealthplayerTwo
-                }%`;
-                pressedKeys[event.code] = true;
-                // eslint-enable no-unused-expressions
                 Object.keys(pressedKeys).forEach(() => {
-                    if (!pressedKeys[controls.PlayerOneBlock] && !pressedKeys[controls.PlayerTwoBlock]) {
+                    updateHealthBar();
+                    // Player 1 Controls
+                    if (!pressedKeys[controls.PlayerOneBlock]) {
+                        getSpecialMoves(playerOne, playerTwo, controls.PlayerOneCriticalHitCombination);
                         if (pressedKeys[controls.PlayerOneAttack]) {
                             getDamage(playerOne, playerTwo);
                         }
+                    } else {
+                        playerOne.defensivePosition = true;
+                    }
+
+                    // Player 2 Controls
+                    if (!pressedKeys[controls.PlayerTwoBlock]) {
+                        getSpecialMoves(playerTwo, playerOne, controls.PlayerTwoCriticalHitCombination);
                         if (pressedKeys[controls.PlayerTwoAttack]) {
                             getDamage(playerTwo, playerOne);
                         }
+                    } else {
+                        playerTwo.defensivePosition = true;
                     }
                 });
-                // eslint-enable no-unused-expressions
             }
         });
 
         document.addEventListener('keyup', event => {
+            Object.keys(pressedKeys).forEach(() => {
+                if (pressedKeys[controls.PlayerOneBlock]) {
+                    playerTwo.defensivePosition = false;
+                }
+
+                if (pressedKeys[controls.PlayerTwoBlock]) {
+                    playerTwo.defensivePosition = false;
+                }
+            });
             delete pressedKeys[event.code];
         });
+    }).then(winner => {
+        return showWinnerModal(winner);
     });
 }
+
