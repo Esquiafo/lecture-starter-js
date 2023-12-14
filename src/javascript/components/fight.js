@@ -58,8 +58,6 @@ export async function fight(firstFighter, secondFighter) {
             }%`;
         };
         document.addEventListener('keypress', event => {
-            getSpecialMoves(playerOne, playerTwo, controls.PlayerOneCriticalHitCombination);
-            getSpecialMoves(playerTwo, playerOne, controls.PlayerTwoCriticalHitCombination);
             if (pressedKeys) updateFighterIndicators();
             if (playerOne.health <= 0 || playerTwo.health <= 0) {
                 updateFighterIndicators();
@@ -72,9 +70,11 @@ export async function fight(firstFighter, secondFighter) {
                     if (!pressedKeys[controls.PlayerOneBlock] && !pressedKeys[controls.PlayerTwoBlock]) {
                         if (pressedKeys[controls.PlayerOneAttack]) {
                             getDamage(playerOne, playerTwo);
+                            getSpecialMoves(playerOne, playerTwo, controls.PlayerOneCriticalHitCombination);
                         }
                         if (pressedKeys[controls.PlayerTwoAttack]) {
                             getDamage(playerTwo, playerOne);
+                            getSpecialMoves(playerTwo, playerOne, controls.PlayerTwoCriticalHitCombination);
                         }
                     }
                 });
