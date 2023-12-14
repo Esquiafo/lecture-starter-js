@@ -76,9 +76,11 @@ export async function fight(firstFighter, secondFighter) {
                         getSpecialMoves(playerOne, playerTwo, controls.PlayerOneCriticalHitCombination);
                         if (pressedKeys[controls.PlayerOneAttack]) {
                             getDamage(playerOne, playerTwo);
+                            updateHealthBar();
                         }
                     } else {
                         playerOne.defensivePosition = true;
+                        updateHealthBar();
                     }
 
                     // Player 2 Controls
@@ -86,9 +88,11 @@ export async function fight(firstFighter, secondFighter) {
                         getSpecialMoves(playerTwo, playerOne, controls.PlayerTwoCriticalHitCombination);
                         if (pressedKeys[controls.PlayerTwoAttack]) {
                             getDamage(playerTwo, playerOne);
+                            updateHealthBar();
                         }
                     } else {
                         playerTwo.defensivePosition = true;
+                        updateHealthBar();
                     }
                 });
             }
@@ -98,16 +102,18 @@ export async function fight(firstFighter, secondFighter) {
             Object.keys(pressedKeys).forEach(() => {
                 if (pressedKeys[controls.PlayerOneBlock]) {
                     playerTwo.defensivePosition = false;
+                    updateHealthBar();
                 }
 
                 if (pressedKeys[controls.PlayerTwoBlock]) {
                     playerTwo.defensivePosition = false;
+                    updateHealthBar();
                 }
             });
             delete pressedKeys[event.code];
+            updateHealthBar();
         });
     }).then(winner => {
         return showWinnerModal(winner);
     });
 }
-
